@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -22,3 +23,9 @@ print("\nIncorrect Predictions:")
 for i in range(len(y_test)):
     if y_test[i] != y_pred[i]:
         print("Actual:", y_test[i], "Predicted:", y_pred[i])
+
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_pred)
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.title("KNN Predictions")
+plt.show()
