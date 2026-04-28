@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier, AdaBoostClassifier
@@ -22,6 +23,19 @@ boost = AdaBoostClassifier(n_estimators=50, random_state=42)
 boost.fit(X_train, y_train)
 y_pred_boost = boost.predict(X_test)
 
-print("Bagging Accuracy:", accuracy_score(y_test, y_pred_bag))
-print("Random Forest Accuracy:", accuracy_score(y_test, y_pred_rf))
-print("Boosting Accuracy:", accuracy_score(y_test, y_pred_boost))
+acc_bag = accuracy_score(y_test, y_pred_bag)
+acc_rf = accuracy_score(y_test, y_pred_rf)
+acc_boost = accuracy_score(y_test, y_pred_boost)
+
+print("Bagging Accuracy:", acc_bag)
+print("Random Forest Accuracy:", acc_rf)
+print("Boosting Accuracy:", acc_boost)
+
+methods = ["Bagging", "Random Forest", "Boosting"]
+accuracies = [acc_bag, acc_rf, acc_boost]
+
+plt.bar(methods, accuracies)
+plt.xlabel("Methods")
+plt.ylabel("Accuracy")
+plt.title("Ensemble Methods Comparison")
+plt.show()
