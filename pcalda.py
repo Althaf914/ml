@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
@@ -27,3 +28,15 @@ X_test_lda = lda.transform(X_test)
 
 print("\nLDA Transformed Train Data:")
 print(X_train_lda[:5])
+
+plt.scatter(X_train_pca[:, 0], X_train_pca[:, 1], c=y_train)
+plt.title("PCA Visualization")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.show()
+
+plt.scatter(X_train_lda[:, 0], X_train_lda[:, 1], c=y_train)
+plt.title("LDA Visualization")
+plt.xlabel("LD1")
+plt.ylabel("LD2")
+plt.show()
