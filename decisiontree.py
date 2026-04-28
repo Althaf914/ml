@@ -1,6 +1,7 @@
+import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 
 data = load_iris()
 X = data.data
@@ -29,3 +30,7 @@ prediction = model.predict(sample)
 print("\nNew Sample Prediction:")
 print("Sample:", sample)
 print("Predicted Class:", prediction[0])
+
+plt.figure()
+plot_tree(model)
+plt.show()
