@@ -1,0 +1,102 @@
+cd /home/cloudera
+mkdir WordCount
+cd WordCount
+
+
+Create 3 classes:
+1.	WCMapper.java 
+2.	WCReducer.java 
+3.	WCDriver.java
+
+
+
+
+
+Step 3: Mapper Code
+import java.io.IOException;
+import java.util.StringTokenizer;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WCMapper extends Mapper<Object, Text, Text, IntWritable> {
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        StringTokenizer itr = new StringTokenizer(value.toString());
+        while (itr.hasMoreTokens()) {
+            word.set(itr.nextToken());
+            context.write(word, one);
+        }
+    }
+}
+
+Step 4: Reducer Code
+import java.io.IOException;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class WCReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    public void reduce(Text key, Iterable<IntWritable> values, Context context) 
+        throws IOException, InterruptedException {
+        int sum = 0;
+
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}
+
+Step 5: Driver Code
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WCDriver {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "word count");
+
+        job.setJarByClass(WCDriver.class);
+        job.setMapperClass(WCMapper.class);
+        job.setReducerClass(WCReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+
+
+cd /home/cloudera/workspace1/WordCount
+
+ls
+
+mkdir wordcount_classes
+
+javac -classpath $(hadoop classpath) -d wordcount_classes *.java
+
+jar -cvf wordcount.jar -C wordcount_classes/ .
+
+nano input.txt
+
+hadoop fs -mkdir /input
+
+hadoop fs -put input.txt /input
+
+hadoop fs -rm -r /output
+
+hadoop jar wordcount.jar WCDriver /input /output
+
+hadoop fs -ls /output
+
+hadoop fs -cat /output/part-r-00000
